@@ -1,11 +1,23 @@
 import { useState } from "react";
 
+// ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
+const T = {
+  headerBg: "#0f172a", headerBorder: "#1e293b",
+  pageBg: "#f8f9fb", cardBg: "#ffffff", cardBorder: "#e5e7eb",
+  textPrimary: "#111827", textSecondary: "#374151",
+  textMuted: "#6b7280", textFaint: "#9ca3af",
+  accent: "#4f46e5", accentLight: "#eef2ff",
+  accentBorder: "#c7d2fe", accentText: "#4338ca",
+  success: "#16a34a", successLight: "#f0fdf4", successBorder: "#bbf7d0",
+  warning: "#d97706", warningLight: "#fffbeb", warningBorder: "#fde68a",
+  danger: "#dc2626", dangerLight: "#fef2f2", dangerBorder: "#fecaca",
+  mono: "'DM Mono', monospace", sans: "'Inter', sans-serif",
+};
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 const dimensions = [
   {
-    id: "pipeline",
-    label: "Pipeline Integrity",
-    icon: "◈",
-    color: "#3B82F6",
+    id: "pipeline", label: "Pipeline Integrity",
     questions: [
       { q: "Stage progression is based on buyer actions, not rep sentiment", low: "Reps advance deals based on gut feel", high: "Stage gates require documented buyer actions" },
       { q: "Forecast accuracy is within 15% of actual closes in a given quarter", low: "Forecasts are routinely off by 30%+", high: "Forecast vs. actual variance is tracked and improving" },
@@ -14,10 +26,7 @@ const dimensions = [
     ]
   },
   {
-    id: "icp",
-    label: "ICP & Targeting Clarity",
-    icon: "◎",
-    color: "#2EC27E",
+    id: "icp", label: "ICP & Targeting",
     questions: [
       { q: "The ICP is documented with firmographic and behavioral criteria", low: "ICP is tribal knowledge among senior reps", high: "Written ICP with tiered fit criteria is actively maintained" },
       { q: "Disqualification criteria are explicit and applied consistently", low: "We rarely disqualify; every lead gets chased", high: "Reps can articulate why they said no to a deal" },
@@ -26,10 +35,7 @@ const dimensions = [
     ]
   },
   {
-    id: "pricing",
-    label: "Pricing Discipline",
-    icon: "◉",
-    color: "#E85D26",
+    id: "pricing", label: "Pricing Discipline",
     questions: [
       { q: "List prices are documented and consistently communicated to buyers", low: "Pricing is communicated ad hoc; varies by rep", high: "Price books exist and are enforced as the starting point" },
       { q: "Discounting authority is tiered and requires documentation", low: "Reps discount freely to close; no approval needed", high: "Discount tiers require manager/VP sign-off with a documented rationale" },
@@ -38,10 +44,7 @@ const dimensions = [
     ]
   },
   {
-    id: "attribution",
-    label: "Attribution & Measurement",
-    icon: "◐",
-    color: "#A855F7",
+    id: "attribution", label: "Attribution & Measurement",
     questions: [
       { q: "Marketing investment is tied to pipeline and revenue outcomes", low: "Marketing reports on impressions, clicks, and MQLs", high: "Marketing has a defined pipeline and revenue contribution target" },
       { q: "Lead source attribution is tracked through close", low: "Attribution is lost after the MQL handoff to sales", high: "Multi-touch attribution is tracked from first touch to close" },
@@ -50,13 +53,10 @@ const dimensions = [
     ]
   },
   {
-    id: "enablement",
-    label: "Sales Enablement",
-    icon: "◑",
-    color: "#EAB308",
+    id: "enablement", label: "Sales Enablement",
     questions: [
       { q: "New reps reach quota attainment target within a defined onboarding window", low: "Ramp time is undefined; new reps figure it out", high: "Structured onboarding with milestone gates and a defined ramp period" },
-      { q: "A standard sales methodology is applied consistently across the team", low: "Every rep has their own approach; coaching is ad hoc", high: "A defined methodology (MEDDIC, Challenger, etc.) is trained and reinforced" },
+      { q: "A standard sales methodology is applied consistently across the team", low: "Every rep has their own approach; coaching is ad hoc", high: "A defined methodology is trained and reinforced" },
       { q: "Win/loss reviews are conducted and learnings are shared with the full team", low: "Loss reviews happen occasionally; wins are celebrated, not analyzed", high: "Formal win/loss process with findings shared monthly" },
       { q: "Competitive intelligence is current, accessible, and rep-ready", low: "Reps handle competitive situations on their own", high: "Battlecards are maintained, tested, and updated quarterly" },
     ]
@@ -64,20 +64,35 @@ const dimensions = [
 ];
 
 const maturityLevels = [
-  { min: 0, max: 25, label: "Ad Hoc", color: "#E85D26", description: "Commercial operations are informal and founder/rep-dependent. Value leakage is significant and often invisible. The business is growing despite its commercial infrastructure, not because of it." },
-  { min: 26, max: 50, label: "Developing", color: "#EAB308", description: "Core processes exist but aren't enforced consistently. Revenue is predictable in good quarters but fragile. Leadership has identified the gaps; the organization hasn't yet closed them." },
-  { min: 51, max: 75, label: "Defined", color: "#3B82F6", description: "Commercial infrastructure is documented and largely followed. Forecasting is reliable. Marketing and sales are aligned on the basics. The ceiling is execution consistency and measurement rigor." },
-  { min: 76, max: 100, label: "Optimized", color: "#2EC27E", description: "The commercial engine is a competitive advantage. Attribution is tight, pricing is disciplined, and the ICP is continuously refined by data. The team is improving the system, not just operating it." },
+  { min: 0,  max: 25,  label: "Ad Hoc",    color: T.danger,  description: "Commercial operations are informal and founder/rep-dependent. Value leakage is significant and often invisible. The business is growing despite its commercial infrastructure, not because of it." },
+  { min: 26, max: 50,  label: "Developing", color: T.warning, description: "Core processes exist but aren't enforced consistently. Revenue is predictable in good quarters but fragile. Leadership has identified the gaps; the organization hasn't yet closed them." },
+  { min: 51, max: 75,  label: "Defined",    color: T.accent,  description: "Commercial infrastructure is documented and largely followed. Forecasting is reliable. Marketing and sales are aligned on the basics. The ceiling is execution consistency and measurement rigor." },
+  { min: 76, max: 100, label: "Optimized",  color: T.success, description: "The commercial engine is a competitive advantage. Attribution is tight, pricing is disciplined, and the ICP is continuously refined by data. The team is improving the system, not just operating it." },
 ];
 
+// ─── COMPONENTS ───────────────────────────────────────────────────────────────
+
+function ScoreBar({ label, score, color }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+        <span style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>{label}</span>
+        <span style={{ fontFamily: T.mono, fontSize: 12, color, fontWeight: 600 }}>{score !== null ? `${score}%` : "—"}</span>
+      </div>
+      <div style={{ background: "#e5e7eb", height: 6, borderRadius: 3 }}>
+        {score !== null && (
+          <div style={{ background: color, height: "100%", borderRadius: 3, width: `${score}%`, transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)" }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function CommercialScorecard() {
-  const [scores, setScores] = useState({});
-  const [view, setView] = useState("survey"); // survey | results
+  const [scores, setScores]   = useState({});
+  const [view, setView]       = useState("survey");
 
-  const setScore = (dimId, qIdx, val) => {
-    setScores(prev => ({ ...prev, [`${dimId}-${qIdx}`]: val }));
-  };
-
+  const setScore = (dimId, qIdx, val) => setScores(prev => ({ ...prev, [`${dimId}-${qIdx}`]: val }));
   const getScore = (dimId, qIdx) => scores[`${dimId}-${qIdx}`] ?? null;
 
   const dimScore = (dim) => {
@@ -86,54 +101,59 @@ export default function CommercialScorecard() {
     return Math.round((vals.reduce((a, b) => a + b, 0) / (vals.length * 4)) * 100);
   };
 
-  const totalAnswered = Object.keys(scores).length;
+  const totalAnswered  = Object.keys(scores).length;
   const totalQuestions = dimensions.reduce((a, d) => a + d.questions.length, 0);
-  const overallScore = totalAnswered > 0
+  const overallScore   = totalAnswered > 0
     ? Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / (totalAnswered * 4) * 100)
     : 0;
 
   const maturity = maturityLevels.find(m => overallScore >= m.min && overallScore <= m.max) || maturityLevels[0];
-
-  const weakest = [...dimensions].sort((a, b) => {
-    const sa = dimScore(a) ?? 999, sb = dimScore(b) ?? 999;
-    return sa - sb;
-  }).slice(0, 2).filter(d => dimScore(d) !== null);
-
   const complete = totalAnswered === totalQuestions;
 
+  const weakest = [...dimensions]
+    .map(d => ({ ...d, score: dimScore(d) }))
+    .filter(d => d.score !== null)
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 2);
+
+  const improvementGuide = {
+    pipeline:    "Start with a pipeline audit and stage-gate criteria. Even a basic buyer-action requirement for stage progression will improve forecast accuracy within one quarter.",
+    icp:         "Run a closed-won analysis before touching anything else. The 20% of deals that drove 60%+ of margin will tell you more about your real ICP than any planning session.",
+    pricing:     "Begin with a discount audit across 24 months of closed-won data. Identify the pattern before touching list prices.",
+    attribution: "Even a basic first-touch/last-touch model beats no model. Start there before investing in multi-touch infrastructure.",
+    enablement:  "Ramp time and methodology consistency are the first two levers. Define what 'ramped' means before adding headcount.",
+  };
+
   return (
-    <div style={{ minHeight: "100vh", background: "#f8f9fb", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: T.pageBg, fontFamily: T.sans, color: T.textPrimary }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
         * { box-sizing: border-box; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
       {/* Header */}
-      <div style={{ background: "#111827", padding: "28px 40px" }}>
-        <div style={{ maxWidth: 780, margin: "0 auto" }}>
-          <div style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase", color: "#E85D26", fontFamily: "'DM Mono', monospace", marginBottom: 8 }}>
-            Commercial Infrastructure Assessment
+      <div style={{ background: T.headerBg, padding: "20px 40px", borderBottom: `1px solid ${T.headerBorder}` }}>
+        <div style={{ maxWidth: 780, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: T.accent, marginBottom: 5 }}>
+              Commercial Infrastructure · Self-Assessment
+            </div>
+            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#f1f5f9", letterSpacing: "-0.02em" }}>
+              Commercial Maturity Scorecard
+            </h1>
+            <p style={{ margin: "3px 0 0", color: "#64748b", fontSize: 13 }}>
+              20 questions · 5 dimensions · ~8 minutes
+            </p>
           </div>
-          <h1 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 800, color: "#f9fafb", letterSpacing: "-0.02em" }}>
-            Commercial Maturity Scorecard
-          </h1>
-          <p style={{ margin: 0, color: "#6b7280", fontSize: 13, lineHeight: 1.5 }}>
-            20 questions · 5 dimensions · ~8 minutes · Built for operators assessing their commercial infrastructure
-          </p>
-          <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
-            {["survey", "results"].map(v => (
-              <button key={v} onClick={() => setView(v)} style={{
-                background: view === v ? "#E85D26" : "transparent",
-                color: view === v ? "white" : "#6b7280",
-                border: `1px solid ${view === v ? "#E85D26" : "#374151"}`,
-                borderRadius: 6, padding: "6px 16px",
-                fontSize: 12, fontWeight: 600, cursor: "pointer",
-                textTransform: "capitalize", letterSpacing: "0.04em",
-                transition: "all 0.15s"
-              }}>{v === "survey" ? "Assessment" : "Results"}</button>
+          <div style={{ display: "flex", gap: 1, background: T.headerBorder, borderRadius: 7, padding: 2 }}>
+            {[{ v: "survey", l: "Assessment" }, { v: "results", l: "Results" }].map(tab => (
+              <button key={tab.v} onClick={() => setView(tab.v)} style={{
+                padding: "8px 16px", background: view === tab.v ? "#1e293b" : "transparent",
+                border: "none", borderRadius: 5, cursor: "pointer",
+                fontFamily: T.mono, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                color: view === tab.v ? "#e2e8f0" : "#475569", transition: "all 0.15s"
+              }}>{tab.l}</button>
             ))}
           </div>
         </div>
@@ -146,51 +166,49 @@ export default function CommercialScorecard() {
             {/* Progress */}
             <div style={{ marginBottom: 28 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 12, color: "#6b7280", fontFamily: "'DM Mono', monospace" }}>{totalAnswered}/{totalQuestions} answered</span>
-                {complete && <span style={{ fontSize: 12, color: "#2EC27E", fontWeight: 600 }}>✓ Complete — view results</span>}
+                <span style={{ fontFamily: T.mono, fontSize: 11, color: T.textMuted }}>{totalAnswered} / {totalQuestions} answered</span>
+                {complete && <span style={{ fontFamily: T.mono, fontSize: 11, color: T.success, fontWeight: 600 }}>✓ Complete</span>}
               </div>
-              <div style={{ background: "#e5e7eb", height: 4, borderRadius: 2 }}>
-                <div style={{ background: "#E85D26", height: "100%", borderRadius: 2, width: `${(totalAnswered / totalQuestions) * 100}%`, transition: "width 0.3s" }} />
+              <div style={{ background: "#e5e7eb", height: 3, borderRadius: 2 }}>
+                <div style={{ background: T.accent, height: "100%", borderRadius: 2, width: `${(totalAnswered / totalQuestions) * 100}%`, transition: "width 0.3s" }} />
               </div>
             </div>
 
             {dimensions.map(dim => (
               <div key={dim.id} style={{ marginBottom: 32 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
-                  <span style={{ fontSize: 18, color: dim.color }}>{dim.icon}</span>
-                  <div>
-                    <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#111827" }}>{dim.label}</h2>
-                    {dimScore(dim) !== null && (
-                      <span style={{ fontSize: 11, color: dim.color, fontFamily: "'DM Mono', monospace", fontWeight: 600 }}>{dimScore(dim)}% mature</span>
-                    )}
-                  </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, paddingBottom: 10, borderBottom: `1px solid ${T.cardBorder}` }}>
+                  <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: T.textPrimary }}>{dim.label}</h2>
+                  {dimScore(dim) !== null && (
+                    <span style={{ fontFamily: T.mono, fontSize: 11, color: T.accent, fontWeight: 600 }}>{dimScore(dim)}%</span>
+                  )}
                 </div>
 
                 {dim.questions.map((q, i) => {
                   const val = getScore(dim.id, i);
                   return (
                     <div key={i} style={{
-                      background: "white", border: "1px solid #e5e7eb",
-                      borderRadius: 10, padding: "18px 20px", marginBottom: 10,
-                      borderLeft: val !== null ? `3px solid ${dim.color}` : "3px solid #e5e7eb",
+                      background: T.cardBg,
+                      border: `1px solid ${val !== null ? T.accentBorder : T.cardBorder}`,
+                      borderLeft: `3px solid ${val !== null ? T.accent : T.cardBorder}`,
+                      borderRadius: 8, padding: "16px 18px", marginBottom: 10,
                       transition: "border-color 0.2s"
                     }}>
-                      <p style={{ margin: "0 0 14px", fontSize: 14, fontWeight: 600, color: "#111827", lineHeight: 1.5 }}>{q.q}</p>
+                      <p style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 500, color: T.textPrimary, lineHeight: 1.5 }}>{q.q}</p>
                       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                        <span style={{ fontSize: 11, color: "#9ca3af", flex: 1, lineHeight: 1.3 }}>{q.low}</span>
-                        <div style={{ display: "flex", gap: 6 }}>
+                        <span style={{ fontSize: 11, color: T.textFaint, flex: 1, lineHeight: 1.3 }}>{q.low}</span>
+                        <div style={{ display: "flex", gap: 5 }}>
                           {[1, 2, 3, 4].map(v => (
                             <button key={v} onClick={() => setScore(dim.id, i, v)} style={{
-                              width: 34, height: 34, borderRadius: 6,
-                              background: val === v ? dim.color : val !== null && v <= val ? dim.color + "33" : "#f3f4f6",
-                              color: val === v ? "white" : val !== null && v <= val ? dim.color : "#6b7280",
-                              border: val === v ? `2px solid ${dim.color}` : "2px solid transparent",
+                              width: 36, height: 36, borderRadius: 6,
+                              background: val === v ? T.accent : val !== null && v <= val ? T.accentLight : "#f9fafb",
+                              color: val === v ? "white" : val !== null && v <= val ? T.accentText : T.textMuted,
+                              border: val === v ? `2px solid ${T.accent}` : `2px solid ${T.cardBorder}`,
                               fontWeight: 700, fontSize: 13, cursor: "pointer",
-                              transition: "all 0.15s", fontFamily: "'DM Mono', monospace"
+                              transition: "all 0.15s", fontFamily: T.mono
                             }}>{v}</button>
                           ))}
                         </div>
-                        <span style={{ fontSize: 11, color: "#9ca3af", flex: 1, textAlign: "right", lineHeight: 1.3 }}>{q.high}</span>
+                        <span style={{ fontSize: 11, color: T.textFaint, flex: 1, textAlign: "right", lineHeight: 1.3 }}>{q.high}</span>
                       </div>
                     </div>
                   );
@@ -200,86 +218,73 @@ export default function CommercialScorecard() {
 
             {complete && (
               <button onClick={() => setView("results")} style={{
-                background: "#E85D26", color: "white", border: "none",
-                borderRadius: 8, padding: "14px 32px", fontSize: 14,
-                fontWeight: 700, cursor: "pointer", letterSpacing: "0.04em",
-                width: "100%", marginTop: 8
+                width: "100%", background: T.accent, color: "white", border: "none",
+                borderRadius: 8, padding: "14px", fontSize: 14, fontWeight: 600,
+                cursor: "pointer", fontFamily: T.sans, letterSpacing: "0.02em"
               }}>
-                View Your Results →
+                View Results →
               </button>
             )}
           </div>
         )}
 
         {view === "results" && (
-          <div style={{ animation: "fadeIn 0.4s ease both" }}>
+          <div style={{ animation: "fadeIn 0.4s ease" }}>
             {totalAnswered < 4 ? (
-              <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>
-                <div style={{ fontSize: 40, marginBottom: 16 }}>◈</div>
+              <div style={{ textAlign: "center", padding: "60px 0", color: T.textMuted }}>
                 <p style={{ fontSize: 15 }}>Complete at least one dimension in the Assessment tab to see results.</p>
+                <button onClick={() => setView("survey")} style={{ marginTop: 16, background: T.accent, color: "white", border: "none", borderRadius: 6, padding: "10px 20px", cursor: "pointer", fontFamily: T.sans, fontSize: 13, fontWeight: 600 }}>
+                  Go to Assessment →
+                </button>
               </div>
             ) : (
               <>
                 {/* Overall */}
-                <div style={{
-                  background: "#111827", borderRadius: 12, padding: "28px 32px",
-                  marginBottom: 24, display: "flex", gap: 28, alignItems: "center"
-                }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: 52, fontWeight: 800, color: maturity.color, fontFamily: "'DM Mono', monospace", lineHeight: 1 }}>{overallScore}</div>
-                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: 4 }}>Overall Score</div>
+                <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: `3px solid ${maturity.color}`, borderRadius: 10, padding: "24px 28px", marginBottom: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", display: "flex", gap: 28, alignItems: "center" }}>
+                  <div style={{ textAlign: "center", minWidth: 80 }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 48, fontWeight: 800, color: maturity.color, lineHeight: 1 }}>{overallScore}</div>
+                    <div style={{ fontFamily: T.mono, fontSize: 10, color: T.textFaint, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>Score</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: maturity.color, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "'DM Mono', monospace", marginBottom: 6 }}>Maturity Level</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: "#f9fafb", marginBottom: 8 }}>{maturity.label}</div>
-                    <p style={{ margin: 0, color: "#9ca3af", fontSize: 13, lineHeight: 1.6 }}>{maturity.description}</p>
+                    <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: maturity.color, marginBottom: 6 }}>Maturity Level</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary, marginBottom: 8 }}>{maturity.label}</div>
+                    <p style={{ margin: 0, color: T.textMuted, fontSize: 13, lineHeight: 1.65 }}>{maturity.description}</p>
                   </div>
                 </div>
 
                 {/* Dimension bars */}
-                <div style={{ background: "white", border: "1px solid #e5e7eb", borderRadius: 12, padding: "24px", marginBottom: 24 }}>
-                  <h3 style={{ margin: "0 0 20px", fontSize: 14, fontWeight: 700, color: "#111827" }}>Dimension Breakdown</h3>
+                <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: "20px 24px", marginBottom: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                  <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.textMuted, marginBottom: 16 }}>Dimension Breakdown</div>
                   {dimensions.map(dim => {
                     const s = dimScore(dim);
                     if (s === null) return null;
-                    return (
-                      <div key={dim.id} style={{ marginBottom: 14 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>{dim.label}</span>
-                          <span style={{ fontSize: 12, fontFamily: "'DM Mono', monospace", color: dim.color, fontWeight: 600 }}>{s}%</span>
-                        </div>
-                        <div style={{ background: "#f3f4f6", height: 8, borderRadius: 4 }}>
-                          <div style={{ background: dim.color, height: "100%", borderRadius: 4, width: `${s}%`, transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)" }} />
-                        </div>
-                      </div>
-                    );
+                    const color = s >= 76 ? T.success : s >= 51 ? T.accent : s >= 26 ? T.warning : T.danger;
+                    return <ScoreBar key={dim.id} label={dim.label} score={s} color={color} />;
                   })}
                 </div>
 
-                {/* Priorities */}
+                {/* Improvement areas */}
                 {weakest.length > 0 && (
-                  <div style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 12, padding: "24px", marginBottom: 24 }}>
-                    <h3 style={{ margin: "0 0 16px", fontSize: 14, fontWeight: 700, color: "#92400e" }}>
+                  <div style={{ background: T.warningLight, border: `1px solid ${T.warningBorder}`, borderLeft: `3px solid ${T.warning}`, borderRadius: 10, padding: "20px 24px", marginBottom: 20 }}>
+                    <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: T.warning, marginBottom: 16 }}>
                       Highest-Leverage Improvement Areas
-                    </h3>
+                    </div>
                     {weakest.map(dim => (
-                      <div key={dim.id} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #fed7aa" }}>
-                        <div style={{ fontWeight: 700, fontSize: 13, color: "#111827", marginBottom: 4 }}>{dim.label} · {dimScore(dim)}%</div>
-                        <p style={{ margin: 0, fontSize: 13, color: "#4b5563", lineHeight: 1.6 }}>
-                          {dim.id === "pipeline" && "Pipeline integrity is the foundation of forecast reliability and commercial credibility. Start with a pipeline audit and stage-gate criteria."}
-                          {dim.id === "icp" && "Targeting clarity drives everything downstream — MQL quality, win rates, onboarding success. A joint ICP definition session with sales and marketing typically unlocks fast gains."}
-                          {dim.id === "pricing" && "Pricing discipline is the highest-ROI commercial lever most teams under-invest in. Begin with a discount audit before touching list prices."}
-                          {dim.id === "attribution" && "Without attribution, marketing investment decisions are political rather than analytical. Even a basic first-touch/last-touch model beats no model."}
-                          {dim.id === "enablement" && "Enablement gaps compound — every quarter a rep underperforms due to poor onboarding is a quarter of lost productivity. Ramp time and methodology consistency are the first two levers."}
+                      <div key={dim.id} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${T.warningBorder}` }}>
+                        <div style={{ fontWeight: 700, fontSize: 13, color: T.textPrimary, marginBottom: 6 }}>
+                          {dim.label} · {dim.score}%
+                        </div>
+                        <p style={{ margin: 0, fontSize: 13, color: T.textSecondary, lineHeight: 1.65 }}>
+                          {improvementGuide[dim.id]}
                         </p>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <div style={{ padding: "16px 20px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 12, color: "#9ca3af", fontFamily: "'DM Mono', monospace" }}>David Hopper · Commercial Operations & Transformation</span>
-                  <button onClick={() => setView("survey")} style={{ background: "none", border: "none", color: "#E85D26", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>← Revise answers</button>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderTop: `1px solid ${T.cardBorder}` }}>
+                  <span style={{ fontFamily: T.mono, fontSize: 11, color: T.textFaint }}>David Hopper · Commercial Operations</span>
+                  <button onClick={() => setView("survey")} style={{ background: "none", border: "none", color: T.accent, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: T.sans }}>← Revise answers</button>
                 </div>
               </>
             )}
